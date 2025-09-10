@@ -1,0 +1,26 @@
+2025-09-10 17:43:05,946 - DEBUG - Client attempting to connect to 127.0.0.1:12345
+2025-09-10 17:43:06,448 - DEBUG - Client successfully connected to 127.0.0.1:12345
+2025-09-10 17:43:06,448 - DEBUG - Sending command: {"operation": "add", "num1": 20.0, "num2": 25.0}
+2025-09-10 17:43:06,449 - DEBUG - Command sent. Awaiting response.
+2025-09-10 17:43:10,782 - DEBUG - Client attempting to connect to 127.0.0.1:12345
+2025-09-10 17:43:10,782 - DEBUG - Client successfully connected to 127.0.0.1:12345
+2025-09-10 17:43:10,782 - DEBUG - Sending command: {"operation": "add", "num1": 20.0, "num2": 25.0}
+2025-09-10 17:43:10,784 - DEBUG - Command sent. Awaiting response.
+2025-09-10 17:50:45,615 - DEBUG - Client attempting to connect to 127.0.0.1:12345
+2025-09-10 17:50:45,615 - DEBUG - Client successfully connected to 127.0.0.1:12345
+2025-09-10 17:50:45,615 - DEBUG - Sending command: {"operation": "add", "num1": 20.0, "num2": 25.0}
+2025-09-10 17:50:45,615 - DEBUG - Command sent. Awaiting response.
+2025-09-10 17:56:03,551 - DEBUG - Client attempting to connect to 127.0.0.1:12345
+2025-09-10 17:56:03,553 - DEBUG - Client successfully connected to 127.0.0.1:12345
+2025-09-10 17:56:03,553 - DEBUG - Sending command: {"operation": "add", "num1": 20.0, "num2": 25.0}
+2025-09-10 17:56:03,553 - DEBUG - Command sent. Awaiting response.
+2025-09-10 18:03:08,568 - DEBUG - Client attempting to connect to 127.0.0.1:12345
+2025-09-10 18:03:08,568 - DEBUG - Client successfully connected to 127.0.0.1:12345
+2025-09-10 18:03:08,568 - DEBUG - Sending command: {"operation": "add", "num1": 20.0, "num2": 25.0}
+2025-09-10 18:03:08,568 - DEBUG - Command sent. Awaiting response.
+2025-09-10 18:03:08,584 - DEBUG - Received raw response: {"status": "success", "result": 45.0}
+2025-09-10 18:03:08,584 - DEBUG - Decoded response: {'status': 'success', 'result': 45.0}
+2025-09-10 18:05:19,861 - DEBUG - Client attempting to connect to 127.0.0.1:12345
+2025-09-10 18:05:19,870 - DEBUG - Client successfully connected to 127.0.0.1:12345
+2025-09-10 18:05:19,870 - DEBUG - Sending command: {"operation": "add", "num1": 20.0, "num2": 25.0}
+2025-09-10 18:05:19,870 - DEBUG - Command sent. Awaiting response.

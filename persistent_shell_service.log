@@ -1,0 +1,38 @@
+2025-09-10 17:28:04,339 - INFO - PersistentShellService starting.
+2025-09-10 17:28:04,339 - INFO - Service will listen on port 12345
+2025-09-10 17:28:04,341 - INFO - Persistent Shell Service listening on 127.0.0.1:12345
+2025-09-10 17:33:51,463 - INFO - PersistentShellService starting.
+2025-09-10 17:33:51,466 - INFO - Service will listen on port 12345
+2025-09-10 17:33:51,466 - INFO - Persistent Shell Service listening on 127.0.0.1:12345
+2025-09-10 17:39:44,074 - INFO - PersistentShellService starting.
+2025-09-10 17:39:44,074 - INFO - Service will listen on port 12345
+2025-09-10 17:39:44,074 - INFO - Persistent Shell Service before listening on 127.0.0.1:12345
+2025-09-10 17:39:44,074 - INFO - Persistent Shell Service listening on 127.0.0.1:12345
+2025-09-10 17:43:06,174 - INFO - PersistentShellService starting.
+2025-09-10 17:43:06,174 - INFO - Service will listen on port 12345
+2025-09-10 17:43:06,178 - INFO - Persistent Shell Service before listening on 127.0.0.1:12345
+2025-09-10 17:43:06,178 - INFO - Persistent Shell Service listening on 127.0.0.1:12345
+2025-09-10 17:50:40,030 - INFO - PersistentShellService starting.
+2025-09-10 17:50:40,030 - INFO - Service will listen on port 12345
+2025-09-10 17:50:40,044 - INFO - Persistent Shell Service before listening on 127.0.0.1:12345
+2025-09-10 17:50:40,044 - INFO - Persistent Shell Service listening on 127.0.0.1:12345
+2025-09-10 17:53:06,054 - INFO - Persistent Shell Service before listening on 127.0.0.1:12345
+2025-09-10 17:53:06,054 - INFO - Persistent Shell Service listening on 127.0.0.1:12345
+2025-09-10 17:54:01,906 - INFO - Persistent Shell Service before listening on 127.0.0.1:12345
+2025-09-10 17:54:01,906 - INFO - Persistent Shell Service listening on 127.0.0.1:12345
+2025-09-10 17:54:44,941 - INFO - Persistent Shell Service before listening on 127.0.0.1:12345
+2025-09-10 17:54:44,941 - INFO - Persistent Shell Service listening on 127.0.0.1:12345
+2025-09-10 18:01:39,025 - INFO - Persistent Shell Service before listening on 127.0.0.1:12345
+2025-09-10 18:01:39,025 - INFO - Persistent Shell Service listening on 127.0.0.1:12345
+2025-09-10 18:02:32,970 - INFO - Persistent Shell Service before listening on 127.0.0.1:12345
+2025-09-10 18:02:32,971 - INFO - Persistent Shell Service listening on 127.0.0.1:12345
+2025-09-10 18:03:08,582 - INFO - Accepted connection from 127.0.0.1:51355
+2025-09-10 18:03:08,582 - DEBUG - Spawning thread for client 127.0.0.1:51355
+2025-09-10 18:03:08,582 - INFO - Attempting to receive data from 127.0.0.1:51355
+2025-09-10 18:03:08,583 - DEBUG - handle_connection thread started for ('127.0.0.1', 51355)
+2025-09-10 18:03:08,584 - INFO - Received: {"operation": "add", "num1": 20.0, "num2": 25.0}
+2025-09-10 18:03:08,584 - INFO - Client connection closed.
+2025-09-10 18:05:12,692 - INFO - PersistentShellService starting.
+2025-09-10 18:05:12,692 - INFO - Service will listen on port 12345
+2025-09-10 18:05:12,697 - INFO - Persistent Shell Service before listening on 127.0.0.1:12345
+2025-09-10 18:05:12,697 - INFO - Persistent Shell Service listening on 127.0.0.1:12345
