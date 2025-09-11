@@ -1,0 +1,28 @@
+Service starting in SvcDoRun...
+Starting run_minimal_server function
+Socket created and configured
+Socket bound to 127.0.0.1:12348
+Socket listening on 127.0.0.1:12348
+Accepted connection from ('127.0.0.1', 51345)
+Connection accepted from ('127.0.0.1', 51345)
+Received: {"operation": "add", "num1": 5.0, "num2": 3.0}
+Sent response: {"status": "success", "result": 8.0}
+Connection closed
+Accepted connection from ('127.0.0.1', 51655)
+Connection accepted from ('127.0.0.1', 51655)
+Received: {"operation": "add", "num1": 5.0, "num2": 3.0}
+Sent response: {"status": "success", "result": 8.0}
+Connection closed
+Service stopping...
+Service starting in SvcDoRun...
+Starting run_minimal_server function
+Server thread started
+Socket created and configured
+Socket bound to 127.0.0.1:12348
+Socket listening on 127.0.0.1:12348
+Accepted connection from ('127.0.0.1', 54653)
+Connection accepted from ('127.0.0.1', 54653)
+Received: {"operation": "add", "num1": 5.0, "num2": 3.0}
+Sent response: {"status": "success", "result": 8.0}
+Connection closed
+Service stopping...
