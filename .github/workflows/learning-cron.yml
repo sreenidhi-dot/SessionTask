@@ -1,0 +1,208 @@
+# This is a LEARNING EXAMPLE for your private repository: sreenidhi-dot/SessionTask
+# Copy this file to: .github/workflows/learning-cron.yml in your SessionTask repository
+
+name: Learning Cron Job - Mini Test Suite
+
+on:
+  schedule:
+    # Run every hour for testing (you can change this)
+    # Format: minute hour day month day-of-week
+    - cron: '0 * * * *'  # Every hour at minute 0
+    # For testing more frequently, use: '*/5 * * * *' (every 5 minutes)
+  
+  workflow_dispatch:
+    # Allow manual triggering
+    inputs:
+      test_message:
+        description: 'Custom test message'
+        required: false
+        default: 'Hello from manual trigger!'
+        type: string
+
+env:
+  LEARNING_MODE: 'true'
+  
+jobs:
+  mini-test-suite:
+    name: Mini Test Suite
+    runs-on: HW-SSALUGU-HYD  # Your self-hosted runner
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: System Information
+      shell: pwsh
+      run: |
+        Write-Host "=== SYSTEM INFORMATION ==="
+        Write-Host "Date/Time: $(Get-Date)"
+        Write-Host "Computer Name: $env:COMPUTERNAME"
+        Write-Host "User: $env:USERNAME"
+        Write-Host "OS: $(Get-WmiObject -Class Win32_OperatingSystem | Select-Object -ExpandProperty Caption)"
+        Write-Host "PowerShell Version: $($PSVersionTable.PSVersion)"
+        Write-Host ""
+    
+    - name: Directory Listing
+      shell: pwsh
+      run: |
+        Write-Host "=== CURRENT DIRECTORY CONTENTS ==="
+        Get-ChildItem -Force | Format-Table Name, Length, LastWriteTime
+        Write-Host ""
+        Write-Host "=== WORKSPACE LOCATION ==="
+        Write-Host "Current Path: $(Get-Location)"
+        Write-Host ""
+    
+    - name: Environment Variables
+      shell: pwsh
+      run: |
+        Write-Host "=== GITHUB ENVIRONMENT ==="
+        Write-Host "Repository: ${{ github.repository }}"
+        Write-Host "Branch: ${{ github.ref }}"
+        Write-Host "Commit: ${{ github.sha }}"
+        Write-Host "Run ID: ${{ github.run_id }}"
+        Write-Host "Event: ${{ github.event_name }}"
+        Write-Host "Actor: ${{ github.actor }}"
+        Write-Host ""
+        if ("${{ inputs.test_message }}" -ne "") {
+            Write-Host "Custom Message: ${{ inputs.test_message }}"
+        }
+    
+    - name: Create Test Files
+      shell: pwsh
+      run: |
+        Write-Host "=== CREATING TEST FILES ==="
+        $testDir = "test-artifacts"
+        New-Item -ItemType Directory -Force -Path $testDir
+        
+        # Create a log file
+        $logFile = "$testDir/test-log.txt"
+        $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+        $logContent = "Test Run Log`n"
+        $logContent += "============`n"
+        $logContent += "Timestamp: $timestamp`n"
+        $logContent += "Run ID: ${{ github.run_id }}`n"
+        $logContent += "Repository: ${{ github.repository }}`n"
+        $logContent += "Branch: ${{ github.ref }}`n"
+        $logContent += "Commit: ${{ github.sha }}`n"
+        $logContent += "Event: ${{ github.event_name }}`n"
+        $logContent += "Runner: HW-SSALUGU-HYD`n`n"
+        $logContent += "Test Results:`n"
+        $logContent += "- System Info: PASS`n"
+        $logContent += "- Directory Listing: PASS`n"
+        $logContent += "- Environment Check: PASS`n"
+        $logContent += "- File Creation: PASS`n`n"
+        $logContent += "Status: ALL TESTS COMPLETED SUCCESSFULLY"
+        $logContent | Out-File -FilePath $logFile -Encoding UTF8
+        
+        # Create a CSV report
+        $csvFile = "$testDir/test-report.csv"
+        $csvContent = "TestName,Status,Timestamp,Duration`n"
+        $csvContent += "SystemInfo,PASS,$timestamp,1s`n"
+        $csvContent += "DirectoryListing,PASS,$timestamp,1s`n"
+        $csvContent += "EnvironmentCheck,PASS,$timestamp,1s`n"
+        $csvContent += "FileCreation,PASS,$timestamp,1s"
+        $csvContent | Out-File -FilePath $csvFile -Encoding UTF8
+        
+        # Create a JSON summary
+        $jsonFile = "$testDir/test-summary.json"
+        $summary = @{
+            runId = "${{ github.run_id }}"
+            timestamp = $timestamp
+            repository = "${{ github.repository }}"
+            branch = "${{ github.ref }}"
+            commit = "${{ github.sha }}"
+            totalTests = 4
+            passedTests = 4
+            failedTests = 0
+            status = "SUCCESS"
+            runner = "HW-SSALUGU-HYD"
+        }
+        $summary | ConvertTo-Json -Depth 3 | Out-File -FilePath $jsonFile -Encoding UTF8
+        
+        Write-Host "Created test artifacts:"
+        Get-ChildItem $testDir | ForEach-Object {
+            Write-Host "- $($_.Name) ($(($_.Length/1KB).ToString('F2')) KB)"
+        }
+    
+    - name: Upload Test Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: learning-test-artifacts-${{ github.run_id }}
+        path: test-artifacts/
+        retention-days: 7
+    
+    - name: Generate Email Report
+      shell: pwsh
+      run: |
+        Write-Host "=== GENERATING EMAIL REPORT ==="
+        $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+        $status = "SUCCESS"
+        $runUrl = "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+        
+        # Create email content
+        $emailContent = "Subject: Learning Cron Job Report - $status`n`n"
+        $emailContent += "GitHub Actions Learning Test Report`n"
+        $emailContent += "===================================`n`n"
+        $emailContent += "Run Details:`n"
+        $emailContent += "- Repository: ${{ github.repository }}`n"
+        $emailContent += "- Branch: ${{ github.ref }}`n"
+        $emailContent += "- Commit: ${{ github.sha }}`n"
+        $emailContent += "- Run ID: ${{ github.run_id }}`n"
+        $emailContent += "- Timestamp: $timestamp`n"
+        $emailContent += "- Runner: HW-SSALUGU-HYD`n"
+        $emailContent += "- Trigger: ${{ github.event_name }}`n`n"
+        $emailContent += "Test Results:`n"
+        $emailContent += "✅ System Information Check: PASSED`n"
+        $emailContent += "✅ Directory Listing: PASSED`n"
+        $emailContent += "✅ Environment Variables: PASSED`n"
+        $emailContent += "✅ File Creation: PASSED`n`n"
+        $emailContent += "Overall Status: $status (4/4 tests passed)`n`n"
+        $emailContent += "Artifacts Generated:`n"
+        $emailContent += "- test-log.txt: Detailed execution log`n"
+        $emailContent += "- test-report.csv: Test results in CSV format`n"
+        $emailContent += "- test-summary.json: JSON summary for automation`n`n"
+        $emailContent += "View Full Report: $runUrl`n`n"
+        $emailContent += "This is an automated learning exercise for GitHub Actions cron jobs.`n"
+        $emailContent += "Next Step: Apply this knowledge to the real nightly build workflow."
+        
+        # Save email content as artifact
+        $emailContent | Out-File -FilePath "test-artifacts/email-report.txt" -Encoding UTF8
+        Write-Host "Email report content saved to artifacts"
+        Write-Host ""
+        Write-Host "EMAIL CONTENT PREVIEW:"
+        Write-Host "====================="
+        Write-Host $emailContent
+    
+    - name: Final Summary
+      shell: pwsh
+      run: |
+        Write-Host "🎉 LEARNING WORKFLOW COMPLETED SUCCESSFULLY! 🎉"
+        Write-Host ""
+        Write-Host "What you learned:"
+        Write-Host "1. ✅ How to set up cron schedules"
+        Write-Host "2. ✅ How to use self-hosted runners"
+        Write-Host "3. ✅ How to create and upload artifacts"
+        Write-Host "4. ✅ How to generate reports"
+        Write-Host "5. ✅ How to prepare email notifications"
+        Write-Host ""
+        Write-Host "Next Steps:"
+        Write-Host "- Modify the cron schedule to test different timings"
+        Write-Host "- Try manual triggering with custom messages"
+        Write-Host "- Apply this knowledge to the real qcnspmcdm project"
+        Write-Host ""
+        Write-Host "Artifacts available for download in the Actions tab!"
+
+# INSTRUCTIONS FOR USE:
+# 1. Copy this entire file to your SessionTask repository
+# 2. Save it as: .github/workflows/learning-cron.yml
+# 3. Make sure your runner (HW-SSALUGU-HYD) is running as a service
+# 4. Commit and push to trigger the workflow
+# 5. Check the Actions tab to see it running
+# 6. Try manual triggering with custom messages
+# 7. Download the artifacts to see the generated reports
+
+# CRON SCHEDULE OPTIONS FOR TESTING:
+# - '*/5 * * * *'  # Every 5 minutes (for quick testing)
+# - '0 * * * *'    # Every hour
+# - '0 9 * * *'    # Every day at 9 AM UTC
+# - '30 18 * * *'  # Every day at 6:30 PM UTC (12 AM IST)
