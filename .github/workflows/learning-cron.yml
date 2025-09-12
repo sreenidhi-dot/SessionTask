@@ -2,7 +2,7 @@ name: Simple Cron Job
 
 on:
   schedule:
-    - cron: '20 16 * * *'  # Daily at 16:20 (4:20 PM)
+    - cron: '*/5 * * * *'  # Every 5 minutes
   workflow_dispatch:
 
 jobs:
