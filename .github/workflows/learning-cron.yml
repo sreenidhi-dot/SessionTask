@@ -7,7 +7,7 @@ on:
   schedule:
     # Run every hour for testing (you can change this)
     # Format: minute hour day month day-of-week
-    - cron: '0 * * * *'  # Every hour at minute 0
+    - cron: '30 * * * *'  # Every hour at minute 0
     # For testing more frequently, use: '*/5 * * * *' (every 5 minutes)
   
   workflow_dispatch:
