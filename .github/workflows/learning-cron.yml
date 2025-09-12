@@ -2,7 +2,7 @@ name: Simple Cron Job
 
 on:
   schedule:
-    - cron: '*/10 * * * *'  # Every 10 minutes (more reliable than 5)
+    - cron: '0 * * * *'  # Every hour at minute 0
   workflow_dispatch:
     inputs:
       test_message:
