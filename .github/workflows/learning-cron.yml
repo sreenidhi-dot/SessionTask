@@ -2,7 +2,7 @@ name: Simple Cron Job
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Every hour at minute 0
+    - cron: '0 18 * * *'  # Daily at 6:00 PM (18:00)
   workflow_dispatch:
     inputs:
       test_message:
