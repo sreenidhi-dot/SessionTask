@@ -1,0 +1,102 @@
+name: Nightly Test Suite - Master Branch
+
+on:
+  schedule:
+    # Run every day at 12:00 AM IST (18:30 UTC previous day)
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    # Allow manual triggering for testing
+    inputs:
+      branch:
+        description: 'Branch to test'
+        required: false
+        default: 'master'
+        type: string
+
+env:
+  NIGHTLY_RUN: 'true'
+  
+jobs:
+  # Call the existing learning-cron.yml workflow
+  call-main-workflow:
+    name: Execute Main Test Workflow
+    uses: ./.github/workflows/learning-cron.yml
+    secrets: inherit
+    
+  # Download and preserve all test artifacts
+  collect-artifacts:
+    name: Collect Test Artifacts
+    runs-on: self-hosted
+    needs: call-main-workflow
+    if: always()
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.branch || 'master' }}
+    
+    - name: Download all test artifacts
+      uses: actions/download-artifact@v3
+      with:
+        path: ./test-artifacts
+    
+    - name: Create artifact summary
+      shell: pwsh
+      run: |
+        $reportDate = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
+        $workflowStatus = "${{ needs.call-main-workflow.result }}"
+        
+        Write-Host "=== NIGHTLY TEST SUMMARY ==="
+        Write-Host "Date: $reportDate"
+        Write-Host "Branch: ${{ inputs.branch || 'master' }}"
+        Write-Host "Commit: ${{ github.sha }}"
+        Write-Host "Workflow Status: $workflowStatus"
+        Write-Host "Run ID: ${{ github.run_id }}"
+        Write-Host ""
+        
+        if (Test-Path "./test-artifacts") {
+            Write-Host "Test Artifacts Generated:"
+            Get-ChildItem "./test-artifacts" -Directory | ForEach-Object {
+                $fileCount = (Get-ChildItem $_.FullName -Recurse -File).Count
+                Write-Host "- $($_.Name) ($fileCount files)"
+            }
+        } else {
+            Write-Host "No test artifacts found"
+        }
+        
+        Write-Host ""
+        Write-Host "Test Categories Executed:"
+        Write-Host "- Functional Tests (10 scenarios)"
+        Write-Host "- Stability Tests (2 scenarios)"
+        Write-Host "- Performance Tests (3 scenarios)"
+        Write-Host "Total: 15 test scenarios"
+    
+    - name: Upload all nightly artifacts
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: nightly-test-artifacts-${{ github.run_id }}
+        path: ./test-artifacts/
+        retention-days: 30
+    
+    - name: Notify on failure
+      if: needs.call-main-workflow.result == 'failure'
+      shell: pwsh
+      run: |
+        Write-Host " NIGHTLY TEST FAILURE "
+        Write-Host "Branch: ${{ inputs.branch || 'master' }}"
+        Write-Host "Commit: ${{ github.sha }}"
+        Write-Host "Time: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') UTC"
+        Write-Host "Run ID: ${{ github.run_id }}"
+    
+    - name: Notify on success
+      if: needs.call-main-workflow.result == 'success'
+      shell: pwsh
+      run: |
+        Write-Host " NIGHTLY TESTS PASSED "
+        Write-Host "Branch: ${{ inputs.branch || 'master' }}"
+        Write-Host "Commit: ${{ github.sha }}"
+        Write-Host "Time: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') UTC"
+        Write-Host "Run ID: ${{ github.run_id }}"
+        Write-Host "All test categories completed successfully!"

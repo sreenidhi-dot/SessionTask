@@ -1,8 +1,8 @@
 name: Simple Cron Job
 
 on:
-  schedule:
-    - cron: '0 6 * * *'    # 6:00 AM UTC (11:30 AM IST)
+  push:
+    branches: [ main, master ]
   workflow_dispatch:
     inputs:
       test_message:
