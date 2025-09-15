@@ -3,6 +3,13 @@ name: Simple Cron Job
 on:
   push:
     branches: [ main, master ]
+  workflow_call:
+    inputs:
+      test_message:
+        description: 'Test message'
+        required: false
+        default: 'Manual test run'
+        type: string
   workflow_dispatch:
     inputs:
       test_message:
