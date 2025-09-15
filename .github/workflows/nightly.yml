@@ -42,7 +42,7 @@ jobs:
         path: ./test-artifacts
     
     - name: Create detailed test report
-      shell: pwsh
+      shell: powershell
       run: |
         $reportDate = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
         $workflowStatus = "${{ needs.call-main-workflow.result }}"
@@ -191,7 +191,7 @@ jobs:
     
     - name: Console notification on failure
       if: needs.call-main-workflow.result == 'failure'
-      shell: pwsh
+      shell: powershell
       run: |
         Write-Host "🚨 NIGHTLY TEST FAILURE 🚨"
         Write-Host "Branch: ${{ inputs.branch || 'main' }}"
@@ -202,7 +202,7 @@ jobs:
     
     - name: Console notification on success
       if: needs.call-main-workflow.result == 'success'
-      shell: pwsh
+      shell: powershell
       run: |
         Write-Host "✅ NIGHTLY TESTS PASSED ✅"
         Write-Host "Branch: ${{ inputs.branch || 'main' }}"

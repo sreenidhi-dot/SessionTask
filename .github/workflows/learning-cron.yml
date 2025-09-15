@@ -34,7 +34,7 @@ jobs:
         Write-Host "Run Time: $timestamp"
         Write-Host "Repository: ${{ github.repository }}"
         Write-Host "Run ID: ${{ github.run_id }}"
-        echo "time=$timestamp" >> $env:GITHUB_OUTPUT
+        echo "time=$timestamp" >> $en :GITHUB_OUTPUT
     
     - name: Create Report
       shell: powershell
