@@ -37,7 +37,7 @@ jobs:
         ref: ${{ inputs.branch || 'master' }}
     
     - name: Download all test artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         path: ./test-artifacts
     
@@ -110,7 +110,7 @@ jobs:
         Write-Host "Success Rate: $([math]::Round(($passedTests/$totalTests)*100, 2))%"
     
     - name: Upload detailed test report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: nightly-test-report-${{ github.run_id }}
@@ -118,7 +118,7 @@ jobs:
         retention-days: 30
     
     - name: Upload all nightly artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: nightly-test-artifacts-${{ github.run_id }}
