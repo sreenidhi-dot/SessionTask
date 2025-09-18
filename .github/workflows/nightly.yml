@@ -23,9 +23,9 @@ jobs:
     uses: ./.github/workflows/learning-cron.yml
     secrets: inherit
     
-  # Download and preserve all test artifacts
-  collect-artifacts:
-    name: Collect Test Artifacts
+  # Send notifications and collect artifacts regardless of workflow outcome
+  send-notifications:
+    name: Send Notifications & Collect Artifacts
     runs-on: self-hosted
     needs: call-main-workflow
     if: always()
@@ -40,6 +40,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         path: ./test-artifacts
+      continue-on-error: true
     
     - name: Create detailed test report
       shell: powershell
@@ -92,6 +93,9 @@ jobs:
                 $fileCount = (Get-ChildItem $_.FullName -Recurse -File).Count
                 $reportContent += "- $($_.Name) ($fileCount files)`n"
             }
+        } else {
+            $reportContent += "`n=== ARTIFACTS GENERATED ===`n"
+            $reportContent += "No artifacts found (workflow may have failed early)`n"
         }
         
         $reportContent += "`n=== EXECUTION ENVIRONMENT ===`n"
@@ -124,70 +128,51 @@ jobs:
         name: nightly-test-artifacts-${{ github.run_id }}
         path: ./test-artifacts/
         retention-days: 30
+      continue-on-error: true
     
-    - name: Send email notification on failure
-      if: needs.call-main-workflow.result == 'failure'
-      uses: dawidd6/action-send-mail@v3
+    - name: Setup Python for email notifications
+      uses: actions/setup-python@v4
       with:
-        server_address: smtp.gmail.com
-        server_port: 587
-        username: ${{ secrets.EMAIL_USERNAME }}
-        password: ${{ secrets.EMAIL_PASSWORD }}
-        subject: "❌ Nightly Test Suite FAILED - ${{ github.repository }}"
-        to: ${{ secrets.EMAIL_TO }}
-        from: "GitHub Actions <${{ secrets.EMAIL_USERNAME }}>"
-        body: |
-          🚨 NIGHTLY TEST SUITE FAILURE 🚨
-          
-          Repository: ${{ github.repository }}
-          Branch: ${{ inputs.branch || 'main' }}
-          Commit: ${{ github.sha }}
-          Run ID: ${{ github.run_id }}
-          Time: ${{ github.event.head_commit.timestamp }}
-          
-          The nightly test suite has FAILED. Please check the workflow logs and artifacts for details.
-          
-          Workflow URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          
-          Download test reports and artifacts from the workflow page.
-          
-          This is an automated message from GitHub Actions.
-        attachments: nightly-test-report.txt
+        python-version: '3.x'
     
-    - name: Send email notification on success
-      if: needs.call-main-workflow.result == 'success'
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp.gmail.com
-        server_port: 587
-        username: ${{ secrets.EMAIL_USERNAME }}
-        password: ${{ secrets.EMAIL_PASSWORD }}
-        subject: "✅ Nightly Test Suite PASSED - ${{ github.repository }}"
-        to: ${{ secrets.EMAIL_TO }}
-        from: "GitHub Actions <${{ secrets.EMAIL_USERNAME }}>"
-        body: |
-          ✅ NIGHTLY TEST SUITE SUCCESS ✅
-          
-          Repository: ${{ github.repository }}
-          Branch: ${{ inputs.branch || 'main' }}
-          Commit: ${{ github.sha }}
-          Run ID: ${{ github.run_id }}
-          Time: ${{ github.event.head_commit.timestamp }}
-          
-          All nightly tests have PASSED successfully!
-          
-          Test Summary:
-          - Total Tests: 10
-          - Passed: 10
-          - Failed: 0
-          - Success Rate: 100%
-          
-          Workflow URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          
-          Download detailed test reports and artifacts from the workflow page.
-          
-          This is an automated message from GitHub Actions.
-        attachments: nightly-test-report.txt
+    - name: Send email notification using custom script
+      if: always()
+      shell: powershell
+      run: |
+        # Parse test results from the report
+        $reportFile = "nightly-test-report.txt"
+        $totalTests = 10
+        $passedTests = 10
+        $failedTests = 0
+        
+        if (Test-Path $reportFile) {
+          $reportContent = Get-Content $reportFile -Raw
+          if ($reportContent -match "TOTAL TESTS: (\d+)") { $totalTests = [int]$matches[1] }
+          if ($reportContent -match "PASSED: (\d+)") { $passedTests = [int]$matches[1] }
+          if ($reportContent -match "FAILED: (\d+)") { $failedTests = [int]$matches[1] }
+        }
+        
+        # Determine workflow result
+        $workflowResult = "${{ needs.call-main-workflow.result }}"
+        if ($workflowResult -eq "success") {
+          $result = "success"
+        } else {
+          $result = "failure"
+        }
+        
+        # Run the Python script with parameters
+        python send_email.py `
+          --workflow-result $result `
+          --build-id "${{ github.run_id }}" `
+          --repository "${{ github.repository }}" `
+          --branch "${{ inputs.branch || 'main' }}" `
+          --commit "${{ github.sha }}" `
+          --recipients "${{ secrets.EMAIL_TO }}" `
+          --sender "${{ secrets.EMAIL_SENDER }}" `
+          --report-file "nightly-test-report.txt" `
+          --total-tests $totalTests `
+          --passed-tests $passedTests `
+          --failed-tests $failedTests
     
     - name: Console notification on failure
       if: needs.call-main-workflow.result == 'failure'
