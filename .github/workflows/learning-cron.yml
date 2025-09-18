@@ -1,8 +1,6 @@
 name: Simple Cron Job
 
 on:
-  push:
-    branches: [ main, master ]
   workflow_call:
     inputs:
       test_message:
